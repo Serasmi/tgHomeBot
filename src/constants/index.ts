@@ -1,3 +1,3 @@
 export enum HAButton {
-    humidity = "Humidity"
+  humidity = 'Humidity',
 }
