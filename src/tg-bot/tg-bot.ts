@@ -1,15 +1,17 @@
 import 'dotenv/config';
 import TelegramBot, { KeyboardButton } from 'node-telegram-bot-api';
 
-import { config } from './config';
-import { HAButton } from './constants';
-import { isUserPermitted, useAuth } from './utils';
+import { config } from '../config';
+import { HAButton } from '../homeassistant/constants';
+import { isUserPermitted, useAuth } from '../utils';
+
+import type { Client } from '../homeassistant/client';
 
 // replace the value below with the Telegram token you receive from @BotFather
 // TODO: remove token from here
 const token = config.tg.api.token;
 
-export const makeBot = () => {
+export const initBot = (haClient: Client) => {
   // Create a bot that uses 'polling' to fetch new updates
   const bot = new TelegramBot(token, { polling: true });
 
@@ -26,7 +28,14 @@ export const makeBot = () => {
     // bot.sendMessage(chatId, 'Received your message');
 
     if (msg.text === HAButton.humidity) {
-      bot.sendMessage(chatId, `You have asked for ${HAButton.humidity}`);
+      haClient.getSensorValue(HAButton.humidity.toLowerCase())
+        .then(sensorValue => {
+          const responseText = sensorValue
+            ? `${HAButton.humidity} is ${sensorValue}`
+            : `Error! Sensor ${HAButton.humidity} was not found.`;
+
+          bot.sendMessage(chatId, responseText);
+        });
     }
   })
   );
