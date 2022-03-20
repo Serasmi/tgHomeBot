@@ -3,7 +3,7 @@ import TelegramBot, { KeyboardButton } from 'node-telegram-bot-api';
 
 import { config } from '../config';
 import { HAButton } from '../homeassistant/constants';
-import { isUserPermitted, useAuth } from '../utils';
+import { generateSensorMessage, isUserPermitted, useAuth } from './utils';
 
 import type { Client } from '../homeassistant/client';
 
@@ -30,9 +30,7 @@ export const initBot = (haClient: Client) => {
     if (msg.text === HAButton.humidity) {
       haClient.getSensorValue(HAButton.humidity.toLowerCase())
         .then(sensorValue => {
-          const responseText = sensorValue
-            ? `${HAButton.humidity} is ${sensorValue}`
-            : `Error! Sensor ${HAButton.humidity} was not found.`;
+          const responseText = generateSensorMessage(HAButton.humidity, sensorValue);
 
           bot.sendMessage(chatId, responseText);
         });

@@ -23,3 +23,8 @@ export interface IState {
   'last_updated': string;
   state: string;
 }
+
+export interface ISensorValue {
+  value: string;
+  updatedAt: Date;
+}

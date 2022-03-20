@@ -1,28 +1,30 @@
 import { service as apiService } from '../service';
 import { findCurrentState, formatSensorValue } from './utils';
 
-import type { IState } from '../../homeassistant/types';
+import type { ISensorValue, IState } from '../../homeassistant/types';
 
 export interface Client {
   getSensorState: (sensorType: string) => Promise<IState | undefined>;
-  getSensorValue: (sensorType: string) => Promise<string | undefined>;
+  getSensorValue: (sensorType: string) => Promise<ISensorValue | undefined>;
 }
 
 export const client = (): Client => {
   const service = apiService();
 
-  const getSensorState = async (sensorType: string): Promise<IState | undefined> => {
+  const getSensorState: Client['getSensorState'] = async (sensorType) => {
     const states = await service.getStates();
 
     return findCurrentState(sensorType, states);
   };
 
-  const getSensorValue = async (sensorType: string): Promise<string | undefined> => {
+  const getSensorValue: Client['getSensorValue'] = async (sensorType) => {
     const sensorState = await getSensorState(sensorType);
 
     if (!sensorState) return;
 
-    return formatSensorValue(sensorState);
+    const value = formatSensorValue(sensorState);
+
+    return { value, updatedAt: new Date(sensorState.last_updated)};
   };
 
   return {
