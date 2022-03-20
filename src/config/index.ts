@@ -1,33 +1,25 @@
-interface HAConfig {
-  api: {
-    baseUrl: string;
-    token: string;
-  };
+import { envVarsSchema } from './utils/validation';
+
+import type { IConfig } from './types';
+
+const { error, value: envVars } = envVarsSchema.validate(process.env);
+if (error) {
+  throw new Error(`Config validation error: ${error.message}`);
 }
 
-interface TGConfig {
-  api: {
-    token: string;
-  };
-  permitUsers: number[];
-}
-
-export interface Config {
-  homeassistant: HAConfig;
-  tg: TGConfig;
-}
-
-export const config: Config = {
+export const config: IConfig = {
   homeassistant: {
     api: {
-      baseUrl: process.env.HA_API_BASEURL ?? '',
-      token: process.env.HA_API_TOKEN ?? ''
+      baseUrl: envVars.HA_API_BASEURL,
+      token: envVars.HA_API_TOKEN
     }
   },
   tg: {
     api: {
-      token: process.env.TG_API_TOKEN ?? '',
+      token: envVars.TG_API_TOKEN,
     },
-    permitUsers: JSON.parse(process.env.TG_PERMIT_USERS ?? '[]'),
+    permitUsers: envVars.TG_PERMIT_USERS,
   },
 };
+
+export type { IConfig } from './types';
