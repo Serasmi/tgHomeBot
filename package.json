@@ -10,9 +10,12 @@
     "node-telegram-bot-api": "^0.56.0"
   },
   "scripts": {
-    "start:dev": "cross-env NODE_ENV=development cross-env BABEL_ENV=server cross-env NTBA_FIX_319=1 nodemon --exec babel-node src/register.ts --exec babel-node --watch src -e js,json,ts"
+    "build": "cross-env NODE_ENV=production cross-env BABEL_ENV=server babel src -d dist --ignore 'src/register.ts' --extensions '.js,.json,.ts'",
+    "start:dev": "cross-env NODE_ENV=development cross-env BABEL_ENV=server cross-env NTBA_FIX_319=1 nodemon --exec babel-node src/register.ts --exec babel-node --watch src -e js,json,ts",
+    "start:prod": "node ./dist/index.js"
   },
   "devDependencies": {
+    "@babel/cli": "^7.17.6",
     "@babel/core": "7.17.7",
     "@babel/node": "7.16.8",
     "@babel/preset-env": "7.16.11",
