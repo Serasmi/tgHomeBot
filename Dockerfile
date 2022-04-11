@@ -9,10 +9,10 @@ WORKDIR /usr/src/app
 COPY package.json ./
 COPY yarn.lock ./
 
-RUN npm install -g yarn
 RUN yarn
 
 # Bundle app source
-COPY . .
+COPY ./dist .
+COPY .env .
 
-CMD [ "node", "server.js" ]
+CMD [ "node", "index.js" ]

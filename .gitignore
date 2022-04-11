@@ -131,3 +131,7 @@ dist
 
 # IDE
 *.code-workspace
+.idea/
+
+# Project
+scripts/
